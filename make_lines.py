@@ -56,6 +56,11 @@ def get_linedata(pings, window='weeks', go_back=6):
     return linedata
 
 
+# it would be cool to be able to specify a range of dates
+# would be cool to be able to type in a title & see it's history
+# and of course ... filtering on "seen"
+# and being able to see reports of things I *have* seen
+
 window = sys.argv[1] or 'weeks'
 go_back = int(sys.argv[2])  if len(sys.argv) > 2 else 30
 
