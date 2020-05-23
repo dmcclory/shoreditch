@@ -5,6 +5,7 @@ from itertools import groupby
 from datetime import datetime, timedelta
 from collections import defaultdict
 
+import sys
 
 # gotta share/import this
 class Entry():
@@ -40,23 +41,26 @@ def get_month_keys_for_n_months(n):
 
 
 
-def get_linedata(pings, weeks=False, months=False, go_back=6):
-    if weeks == True:
+def get_linedata(pings, window='weeks', go_back=6):
+    if window == 'weeks':
         keys = get_week_keys_for_n_months(go_back)
         counts = groupby(pings, lambda d: (d.year, d.month, d.day // 7))
-    else:
+    if window == 'months':
         keys = get_month_keys_for_n_months(go_back)
         counts = groupby(pings, lambda d: (d.year, d.month))
-    window = defaultdict(lambda: 0)
+    cool = defaultdict(lambda: 0)
 
     for (k, g) in counts:
-        window[k] = len(list(g))
-    linedata = [ window[key] for key in keys]
+        cool[k] = len(list(g))
+    linedata = [ cool[key] for key in keys]
     return linedata
 
 
-number_to_see = 30
-datasets = [get_linedata(thing[i].pings, weeks=True, go_back=15) for i in range(0, number_to_see)]
+window = sys.argv[1] or 'weeks'
+go_back = int(sys.argv[2])  if len(sys.argv) > 2 else 30
+
+number_to_see = 20
+datasets = [get_linedata(thing[i].pings, window=window, go_back=go_back) for i in range(0, number_to_see)]
 maximum = max([item for sublist in datasets for item in sublist])
 
 lines = [ sparklines(d, minimum = 0, maximum = maximum + 1)[0] for d in datasets]
