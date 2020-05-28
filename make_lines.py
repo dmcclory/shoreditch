@@ -72,6 +72,10 @@ with open('data.pickle', 'rb') as f:
 
 # it would be cool to be able to specify a range of dates
 # would be cool to be able to type in a title & see it's history
+
+# it would be nice to be able to do something cool for the 'first time added'
+# and the 'completed' date - like a different color
+
 # and of course ... filtering on "seen"
 # and being able to see reports of things I *have* seen
 
