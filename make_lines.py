@@ -103,7 +103,17 @@ def color_for_row(piece):
     return color
 
 
-selected_rows = [thing[i] for i in range(NUMBER_TO_SEE)]
+started_pieces = [t for t in thing if t.titles[0] in started]
+finished_pieces = [t for t in thing if t.titles[0] in finished]
+combined = finished_pieces + started_pieces
+unstarted = [t for t in thing if t not in combined]
+
+# cool_array = combined
+# cool_array = unstarted
+cool_array = thing
+
+subset_count = min(len(cool_array), NUMBER_TO_SEE)
+selected_rows = [cool_array[i] for i in range(subset_count)]
 
 lines = [ build_sparkline(p) for p in selected_rows]
 titles = [title_format(p) for p in selected_rows]
