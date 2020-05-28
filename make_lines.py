@@ -13,10 +13,10 @@ class Entry():
         self.pings = []
         self.titles = []
 
+WINDOW = sys.argv[1] or 'weeks'
+GO_BACK = int(sys.argv[2])  if len(sys.argv) > 2 else 30
 
-with open('data.pickle', 'rb') as f:
-    thing = pickle.load(f)
-
+NUMBER_TO_SEE = 40
 
 def get_week_keys_for_n_months(n):
     today = datetime.now()
@@ -56,6 +56,20 @@ def get_linedata(pings, window='weeks', go_back=6):
     return linedata
 
 
+# gotta share/import this
+class Entry():
+    def __init__(self):
+        self.pings = []
+        self.titles = []
+
+    def get_dataset(self):
+        return get_linedata(self.pings, window=WINDOW, go_back=GO_BACK)
+
+
+with open('data.pickle', 'rb') as f:
+    thing = pickle.load(f)
+
+
 # it would be cool to be able to specify a range of dates
 # would be cool to be able to type in a title & see it's history
 # and of course ... filtering on "seen"
@@ -64,8 +78,9 @@ def get_linedata(pings, window='weeks', go_back=6):
 window = sys.argv[1] or 'weeks'
 go_back = int(sys.argv[2])  if len(sys.argv) > 2 else 30
 
-number_to_see = 20
-datasets = [get_linedata(thing[i].pings, window=window, go_back=go_back) for i in range(0, number_to_see)]
+# number_to_see = 40
+# datasets = [get_linedata(thing[i].pings, window=window, go_back=go_back) for i in range(0, number_to_see)]
+datasets = [thing[i].get_dataset() for i in range(0, NUMBER_TO_SEE)]
 maximum = max([item for sublist in datasets for item in sublist])
 
 lines = [ sparklines(d, minimum = 0, maximum = maximum + 1)[0] for d in datasets]
