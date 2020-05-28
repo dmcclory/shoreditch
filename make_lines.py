@@ -78,8 +78,8 @@ with open('data.pickle', 'rb') as f:
 datasets = [thing[i].get_dataset() for i in range(0, NUMBER_TO_SEE)]
 maximum = max([item for sublist in datasets for item in sublist])
 
-finished = ["Burning", "Jojo Rabbit", "Game of Thrones (s2)", "Uncut Gems", "Babylon Berlin (s3)", "Jaws", "Knives Out", "Barry (s2)", "Germania", "Force Majeure"]
-started = ["Bosch", "Satoshi Kon Filmography", "Death Stranding", "Wolf Hall", "Riverdale"]
+finished = ["Burning", "Jojo Rabbit", "Game of Thrones (s2)", "Uncut Gems", "Babylon Berlin (s3)", "Jaws", "Knives Out", "Barry (s2)", "Germania", "Force Majeure", "The Taking of Pelham 123", "Riverdale", "Parasite", "Chernobyl", "Art of Self defense", "Waiting for Guffman", "Ip Man", "Sopranos (s1)", "Succession (s2)"]
+started = ["Bosch", "Satoshi Kon Filmography", "Death Stranding", "Wolf Hall",  "True Detective (s1)", "Killing Eve (s3)", "Sopranos", "True Detective"]
 
 
 def build_sparkline(piece):
