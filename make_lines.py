@@ -1,6 +1,7 @@
 import pickle
 from sparklines import sparklines
 from itertools import groupby
+import argparse
 
 from datetime import datetime, timedelta
 from collections import defaultdict
@@ -9,10 +10,41 @@ import sys
 
 from termcolor import colored
 
-WINDOW = sys.argv[1] or 'weeks'
-GO_BACK = int(sys.argv[2])  if len(sys.argv) > 2 else 30
+parser = argparse.ArgumentParser(description='Browse the Cool Stuff', allow_abbrev=True)
 
-NUMBER_TO_SEE = 40
+parser.add_argument('-b', '--bucket_size',
+                    dest='window',
+                    default='weeks',
+                    help='group by week or by month (default: week)',
+                   )
+parser.add_argument('-w', '--window',
+                    dest='go_back',
+                    default=20,
+                    type=int,
+                    help='number of buckets to see (default: 20)',
+                   )
+parser.add_argument('-c', '--count',
+                    dest='number_to_see',
+                    default=20,
+                    type=int,
+                    help='number of buckets to see (default: 20)',
+                   )
+parser.add_argument('-s', '--status',
+                    dest='status',
+                    default='all',
+                    help='filter by status (default: all)',
+                   )
+parser.add_argument('-t', '--type',
+                    dest='type',
+                    default='all',
+                    help='filter by media type (default: all)',
+                   )
+
+args = parser.parse_args()
+
+WINDOW = args.window
+GO_BACK = args.go_back
+NUMBER_TO_SEE = args.number_to_see
 
 def get_week_keys_for_n_months(n):
     today = datetime.now()
