@@ -45,6 +45,7 @@ args = parser.parse_args()
 WINDOW = args.window
 GO_BACK = args.go_back
 NUMBER_TO_SEE = args.number_to_see
+STATUS = args.status
 
 def get_week_keys_for_n_months(n):
     today = datetime.now()
@@ -142,7 +143,14 @@ unstarted = [t for t in thing if t not in combined]
 
 # cool_array = combined
 # cool_array = unstarted
-cool_array = thing
+if STATUS == 'started':
+    cool_array = started_pieces
+elif STATUS == 'finished':
+    cool_array = finished_pieces
+elif STATUS == 'unstarted':
+    cool_array = unstarted
+else:
+    cool_array = thing
 
 subset_count = min(len(cool_array), NUMBER_TO_SEE)
 selected_rows = [cool_array[i] for i in range(subset_count)]
