@@ -10,10 +10,7 @@ from fuzzywuzzy import process
 # with open('bigger_file.txt') as f:
     # choices = f.readlines()
 
-class Entry():
-    def __init__(self):
-        self.pings = []
-        self.titles = []
+from entry import Entry
 
 wow = defaultdict(Entry)
 

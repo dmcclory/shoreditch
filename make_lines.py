@@ -1,14 +1,10 @@
+import sys
 import pickle
-from sparklines import sparklines
-from itertools import groupby
 import argparse
 
-from datetime import datetime, timedelta
-from collections import defaultdict
-
-import sys
-
+from sparklines import sparklines
 from termcolor import colored
+from entry import Entry, get_dataset
 
 parser = argparse.ArgumentParser(description='Browse the Cool Stuff', allow_abbrev=True)
 
@@ -19,13 +15,13 @@ parser.add_argument('-b', '--bucket_size',
                    )
 parser.add_argument('-w', '--window',
                     dest='go_back',
-                    default=20,
+                    default=30,
                     type=int,
                     help='number of buckets to see (default: 20)',
                    )
 parser.add_argument('-c', '--count',
                     dest='number_to_see',
-                    default=20,
+                    default=40,
                     type=int,
                     help='number of buckets to see (default: 20)',
                    )
@@ -47,54 +43,6 @@ GO_BACK = args.go_back
 NUMBER_TO_SEE = args.number_to_see
 STATUS = args.status
 
-def get_week_keys_for_n_months(n):
-    today = datetime.now()
-    res = []
-    for i in range(n):
-        t = today - timedelta(7*i)
-        res.append((t.year, t.month, t.day // 7))
-
-    res.reverse()
-    return res
-
-
-def get_month_keys_for_n_months(n):
-    today = datetime.now()
-    res = []
-    for i in range(n):
-        t = today - timedelta(30*i)
-        res.append((t.year, t.month))
-
-    res.reverse()
-    return res
-
-
-
-def get_linedata(pings, window='weeks', go_back=6):
-    if window == 'weeks':
-        keys = get_week_keys_for_n_months(go_back)
-        counts = groupby(pings, lambda d: (d.year, d.month, d.day // 7))
-    if window == 'months':
-        keys = get_month_keys_for_n_months(go_back)
-        counts = groupby(pings, lambda d: (d.year, d.month))
-    cool = defaultdict(lambda: 0)
-
-    for (k, g) in counts:
-        cool[k] = len(list(g))
-    linedata = [ cool[key] for key in keys]
-    return linedata
-
-
-# gotta share/import this
-class Entry():
-    def __init__(self):
-        self.pings = []
-        self.titles = []
-
-    def get_dataset(self):
-        return get_linedata(self.pings, window=WINDOW, go_back=GO_BACK)
-
-
 with open('data.pickle', 'rb') as f:
     thing = pickle.load(f)
 
@@ -108,7 +56,7 @@ with open('data.pickle', 'rb') as f:
 # and of course ... filtering on "seen"
 # and being able to see reports of things I *have* seen
 
-datasets = [thing[i].get_dataset() for i in range(0, NUMBER_TO_SEE)]
+datasets = [get_dataset(thing[i], window=WINDOW, go_back=GO_BACK) for i in range(0, NUMBER_TO_SEE)]
 maximum = max([item for sublist in datasets for item in sublist])
 
 finished = ["Burning", "Jojo Rabbit", "Game of Thrones (s2)", "Uncut Gems", "Babylon Berlin (s3)", "Jaws", "Knives Out", "Barry (s2)", "Germania", "Force Majeure", "The Taking of Pelham 123", "Riverdale", "Parasite", "Chernobyl", "Art of Self defense", "Waiting for Guffman", "Ip Man", "Sopranos (s1)", "Succession (s2)"]
@@ -116,7 +64,7 @@ started = ["Bosch", "Satoshi Kon Filmography", "Death Stranding", "Wolf Hall",  
 
 
 def build_sparkline(piece):
-    dataset = piece.get_dataset()
+    dataset = get_dataset(piece, window=WINDOW, go_back=GO_BACK)
     return sparklines(dataset, minimum = 0, maximum = maximum + 1)[0]
 
 
