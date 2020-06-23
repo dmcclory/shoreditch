@@ -28,13 +28,16 @@ parser.add_argument('-c', '--count',
 parser.add_argument('-s', '--status',
                     dest='status',
                     default='all',
-                    help='filter by status (default: all)',
+                    help='filter by status (default: any)',
                    )
 parser.add_argument('-t', '--type',
                     dest='type',
                     default='all',
-                    help='filter by media type (default: all)',
+                    help='filter by media type (default: any)',
                    )
+parser.add_argument('--all',
+                    action='store_true',
+                    help='ignore count & show all of a certain status')
 
 args = parser.parse_args()
 
@@ -42,6 +45,7 @@ WINDOW = args.window
 GO_BACK = args.go_back
 NUMBER_TO_SEE = args.number_to_see
 STATUS = args.status
+SHOW_ALL=args.all
 
 with open('data.pickle', 'rb') as f:
     thing = pickle.load(f)
@@ -100,7 +104,11 @@ elif STATUS == 'unstarted':
 else:
     cool_array = thing
 
-subset_count = min(len(cool_array), NUMBER_TO_SEE)
+if SHOW_ALL:
+    subset_count = len(cool_array)
+else:
+    subset_count = min(len(cool_array), NUMBER_TO_SEE)
+
 selected_rows = [cool_array[i] for i in range(subset_count)]
 
 lines = [ build_sparkline(p) for p in selected_rows]
