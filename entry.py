@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from collections import defaultdict
 from itertools import groupby
+from dataclasses import dataclass
 
 def get_week_keys_for_n_months(n):
     today = datetime.now()
@@ -43,7 +44,25 @@ def get_dataset(entry, window=None, go_back=None):
     return get_linedata(entry.pings, window, go_back)
 
 
+@dataclass
+class Watch():
+    started: datetime = None
+    finished: datetime = None
+
 class Entry():
     def __init__(self, window, go_back):
         self.pings = []
         self.titles = []
+        self.watches = []
+
+    def finished(self):
+        if not 'watches' in self.__dict__.keys():
+            return False
+        finished_watches = [w for w in self.watches if w.finished]
+        return len(finished_watches) > 0
+
+    def started(self):
+        if not 'watches' in self.__dict__.keys():
+            return False
+        started_watches = [w for w in self.watches if w.started]
+        return len(started_watches) > 0
