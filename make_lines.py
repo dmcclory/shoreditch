@@ -1,3 +1,4 @@
+import os
 import sys
 import pickle
 import argparse
@@ -47,7 +48,9 @@ NUMBER_TO_SEE = args.number_to_see
 STATUS = args.status
 SHOW_ALL=args.all
 
-with open('data.pickle', 'rb') as f:
+PICKLE_PATH = os.environ['PICKLE_PATH']
+
+with open(PICKLE_PATH, 'rb') as f:
     thing = pickle.load(f)
 
 
