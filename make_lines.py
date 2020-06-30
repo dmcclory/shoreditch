@@ -63,9 +63,6 @@ with open('data.pickle', 'rb') as f:
 datasets = [get_dataset(thing[i], window=WINDOW, go_back=GO_BACK) for i in range(0, NUMBER_TO_SEE)]
 maximum = max([item for sublist in datasets for item in sublist])
 
-finished = ["Burning", "Jojo Rabbit", "Game of Thrones (s2)", "Uncut Gems", "Babylon Berlin (s3)", "Jaws", "Knives Out", "Barry (s2)", "Germania", "Force Majeure", "The Taking of Pelham 123", "Riverdale", "Parasite", "Chernobyl", "Art of Self defense", "Waiting for Guffman", "Ip Man", "Sopranos (s1)", "Succession (s2)"]
-started = ["Bosch", "Satoshi Kon Filmography", "Death Stranding", "Wolf Hall",  "True Detective (s1)", "Killing Eve (s3)", "Sopranos", "True Detective"]
-
 
 def build_sparkline(piece):
     dataset = get_dataset(piece, window=WINDOW, go_back=GO_BACK)
@@ -79,22 +76,19 @@ def title_format(piece):
 
 def color_for_row(piece):
     title = piece.titles[0]
-    if title in finished:
+    if piece.finished():
         color = "green"
-    elif title in started:
+    elif piece.started():
         color = "cyan"
     else:
         color = "white"
     return color
 
-
-started_pieces = [t for t in thing if t.titles[0] in started]
-finished_pieces = [t for t in thing if t.titles[0] in finished]
+started_pieces = [t for t in thing if (t.started() and not t.finished())]
+finished_pieces = [t for t in thing if t.finished()]
 combined = finished_pieces + started_pieces
 unstarted = [t for t in thing if t not in combined]
 
-# cool_array = combined
-# cool_array = unstarted
 if STATUS == 'started':
     cool_array = started_pieces
 elif STATUS == 'finished':
