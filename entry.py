@@ -50,7 +50,7 @@ class Watch():
     finished: datetime = None
 
 class Entry():
-    def __init__(self, window, go_back):
+    def __init__(self):
         self.pings = []
         self.titles = []
         self.watches = []
