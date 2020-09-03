@@ -1,14 +1,12 @@
 import os
 import re
-import pickle
 from datetime import datetime
 from collections import defaultdict
 
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 
-# with open('bigger_file.txt') as f:
-    # choices = f.readlines()
+from persistence import store_database
 
 from entry import Entry
 
@@ -62,8 +60,7 @@ thing.reverse()
 for entry in thing:
     entry.pings.sort()
 
-with open('data.pickle', 'wb') as f:
-    pickle.dump(thing, f)
+store_database('data.pickle', thing)
 
 for entry in thing:
     print(entry.titles[0] + ": " + str(len(entry.pings)))

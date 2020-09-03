@@ -8,3 +8,7 @@ def load_database(path):
         data = pickle.load(f)
 
     return data
+
+def store_database(path, store):
+    with open(path, 'wb') as f:
+        pickle.dump(store, f)
