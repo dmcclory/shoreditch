@@ -1,11 +1,11 @@
 import os
 import sys
-import pickle
 import argparse
 
 from sparklines import sparklines
 from termcolor import colored
 from entry import Entry, get_dataset
+from persistence import load_database
 
 parser = argparse.ArgumentParser(description='Browse the Cool Stuff', allow_abbrev=True)
 
@@ -50,9 +50,7 @@ SHOW_ALL=args.all
 
 PICKLE_PATH = os.environ['PICKLE_PATH']
 
-with open(PICKLE_PATH, 'rb') as f:
-    thing = pickle.load(f)
-
+thing = load_database(PICKLE_PATH)
 
 # it would be cool to be able to specify a range of dates
 # would be cool to be able to type in a title & see it's history

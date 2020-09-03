@@ -1,12 +1,9 @@
 import os
-import pickle
-
-from entry import Entry
+from persistence import load_database
 
 PICKLE_PATH = os.environ['PICKLE_PATH']
+data = load_database(PICKLE_PATH)
 
-with open(PICKLE_PATH, 'rb') as f:
-    data = pickle.load(f)
 
 print("'data' holds {} records. have fun repl-in!".format(len(data)))
 
