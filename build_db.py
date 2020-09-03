@@ -3,31 +3,15 @@ import re
 from datetime import datetime
 from collections import defaultdict
 
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
-
-from persistence import store_database
-
 from entry import Entry
+from persistence import store_database
+from fuzzy_search import FuzzySearcher
+
 
 wow = defaultdict(Entry)
-
 current_date = None
 
-huge_choice_set = []
-
-with open('data/2020.txt') as f:
-    huge_choice_set += f.readlines()
-
-with open('data/2019.txt') as f:
-    huge_choice_set += f.readlines()
-
-with open('data/2018.txt') as f:
-    huge_choice_set += f.readlines()
-
-
-def get_matches(title):
-    return process.extract(title, huge_choice_set, limit=10)
+searcher = FuzzySearcher(['data/2020.txt', 'data/2019.txt', 'data/2018.txt'])
 
 for year in ['2018', '2019', '2020']:
     with open('data/{}.txt'.format(year)) as f:
@@ -42,8 +26,7 @@ for year in ['2018', '2019', '2020']:
             current_date = current_date + '/' + year
             current_date = datetime.strptime(current_date, '%m/%d/%Y')
         else:
-            res = get_matches(cleaned)
-            canonicalish = res[0][0]
+            canonicalish = searcher.get_best_match(cleaned)
             wow[canonicalish].titles.append(cleaned)
             wow[canonicalish].pings.append(current_date)
 
@@ -59,5 +42,5 @@ for entry in thing:
 
 store_database('data.pickle', thing)
 
-for entry in thing:
-    print(entry.titles[0] + ": " + str(len(entry.pings)))
+# for entry in thing:
+#     print(entry.titles[0] + ": " + str(len(entry.pings)))
