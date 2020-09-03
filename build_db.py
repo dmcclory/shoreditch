@@ -26,9 +26,6 @@ with open('data/2018.txt') as f:
     huge_choice_set += f.readlines()
 
 
-def number_of_ok_matches(extract):
-    return len(list(filter(lambda a: a[1] >= 90, extract)))
-
 def get_matches(title):
     return process.extract(title, huge_choice_set, limit=10)
 
