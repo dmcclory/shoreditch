@@ -13,15 +13,17 @@ current_date = None
 
 searcher = FuzzySearcher(['data/2020.txt', 'data/2019.txt', 'data/2018.txt'])
 
+from line_predicates import (blank, dateline)
+
 for year in ['2018', '2019', '2020']:
     with open('data/{}.txt'.format(year)) as f:
         choices = f.readlines()
 
     for title in choices:
         cleaned = title.strip()
-        if (cleaned == ''):
+        if blank(cleaned):
             continue
-        elif (re.match('^\d+\/\d+', cleaned)):
+        elif dateline(cleaned):
             current_date = cleaned.strip(':')
             current_date = current_date + '/' + year
             current_date = datetime.strptime(current_date, '%m/%d/%Y')
