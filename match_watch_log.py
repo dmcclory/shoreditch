@@ -14,7 +14,7 @@ from datetime import datetime
 from persistence import load_database
 
 
-PICKLE_PATH = os.environ['PICKLE_PATH']
+PICKLE_PATH = os.environ['MATCH_LINES_INPUT']
 thing = load_database(PICKLE_PATH)
 # with open('data.pickle', 'rb') as f:
 #     thing = pickle.load(f)
