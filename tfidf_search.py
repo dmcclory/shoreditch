@@ -158,8 +158,7 @@ class TfidfSearcher():
             if e.key == '':
                 e.key = key
             e.titles.append(row[1]['title'])
-            e.pings.append(row[1]['date'])
-
+            e.pings.append(datetime.fromisoformat(row[1]['date']))
         for e in wow.values():
             self.entries.append(e)
 
