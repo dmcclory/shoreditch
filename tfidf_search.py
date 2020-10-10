@@ -62,16 +62,16 @@ def get_matches_df(sparse_matrix, name_vector, top=100):
 
     left_side = np.empty([nr_matches], dtype=object)
     right_side = np.empty([nr_matches], dtype=object)
-    similairity = np.zeros(nr_matches)
+    similarity = np.zeros(nr_matches)
 
     for index in range(0, nr_matches):
         left_side[index] = name_vector[sparserows[index]]
         right_side[index] = name_vector[sparsecols[index]]
-        similairity[index] = sparse_matrix.data[index]
+        similarity[index] = sparse_matrix.data[index]
 
     return pd.DataFrame({'left_side': left_side,
                           'right_side': right_side,
-                           'similairity': similairity})
+                           'similarity': similarity})
 
 
 
