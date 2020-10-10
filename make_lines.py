@@ -1,6 +1,7 @@
 import os
 import sys
 import argparse
+from datetime import datetime, timedelta
 
 from sparklines import sparklines
 from termcolor import colored
@@ -109,6 +110,29 @@ selected_rows = [cool_array[i] for i in range(subset_count)]
 lines = [ build_sparkline(p) for p in selected_rows]
 titles = [title_format(p) for p in selected_rows]
 colors_from_statuses = [color_for_row(p) for p in selected_rows]
+
+width = len(lines[0])
+
+def format_header_date(date):
+    return "{}/{}".format(str(date.month).rjust(2, '0'), date.year)
+
+if width > 50:
+    if WINDOW == 'weeks':
+        duration = 7
+    else:
+        duration = 30
+    today = datetime.now()
+    beginning = today - timedelta(duration*GO_BACK)
+    midpoint = today - timedelta(duration*GO_BACK/2)
+    beginning_string = format_header_date(beginning)
+    ending_string = format_header_date(today)
+    midpoint_string = format_header_date(midpoint)
+
+    margin = width % 2
+
+    dateline = beginning_string + midpoint_string.rjust(int((width/2))-3, ' ') + ending_string.rjust(int(width/2)-(4-margin), ' ')
+    print(' ' * 40 + dateline)
+
 
 for (title, line, color) in zip(titles, lines, colors_from_statuses):
     print(colored( title.ljust(40) + line, color))
