@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 from sparklines import sparklines
 from termcolor import colored
-from entry import Entry, get_dataset
+from entry import Entry, get_dataset, count_durations_ago
 from persistence import load_database
 
 parser = argparse.ArgumentParser(description='Browse the Cool Stuff', allow_abbrev=True)
@@ -117,13 +117,9 @@ def format_header_date(date):
     return "{}/{}".format(str(date.month).rjust(2, '0'), date.year)
 
 if width > 50:
-    if WINDOW == 'weeks':
-        duration = 7
-    else:
-        duration = 30
     today = datetime.now()
-    beginning = today - timedelta(duration*GO_BACK)
-    midpoint = today - timedelta(duration*GO_BACK/2)
+    beginning = count_durations_ago(GO_BACK, WINDOW)
+    midpoint = count_durations_ago(GO_BACK/2, WINDOW)
     beginning_string = format_header_date(beginning)
     ending_string = format_header_date(today)
     midpoint_string = format_header_date(midpoint)

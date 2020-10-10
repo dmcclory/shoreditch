@@ -3,11 +3,18 @@ from collections import defaultdict
 from itertools import groupby
 from dataclasses import dataclass
 
-def get_week_keys_for_n_months(n):
+def count_durations_ago(count, duration_string):
     today = datetime.now()
+    if duration_string == 'weeks':
+        duration = 7
+    else:
+        duration = 30
+    return today - timedelta(duration*count)
+
+def get_week_keys_for_n_months(n):
     res = []
     for i in range(n):
-        t = today - timedelta(7*i)
+        t = count_durations_ago(i, 'weeks')
         res.append((t.year, t.month, t.day // 7))
 
     res.reverse()
@@ -18,7 +25,7 @@ def get_month_keys_for_n_months(n):
     today = datetime.now()
     res = []
     for i in range(n):
-        t = today - timedelta(30*i)
+        t = count_durations_ago(i, 'months')
         res.append((t.year, t.month))
 
     res.reverse()
