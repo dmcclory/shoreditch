@@ -50,7 +50,7 @@ def awesome_cossim_top(A, B, ntop, lower_bound=0):
 
   return csr_matrix((data,indices,indptr),shape=(M,N))
 
-def get_matches_df(sparse_matrix, name_vector, top=100):
+def get_matches_df(sparse_matrix, name_vector, top=None):
     non_zeros = sparse_matrix.nonzero()
     sparserows = non_zeros[0]
     sparsecols = non_zeros[1]
@@ -134,9 +134,7 @@ class TfidfSearcher():
         vectorizer = TfidfVectorizer(min_df=1, analyzer=ngrams)
         tf_idf_matrix = vectorizer.fit_transform(titles)
         matches = awesome_cossim_top(tf_idf_matrix, tf_idf_matrix.transpose(), 10, 0.8)
-        self.matches_df = get_matches_df(matches, titles, top=15756)
-        # self.matches_df = get_matches_df(matches, titles, top=18075)
-        # self.matches_df = get_matches_df(matches, titles, top=1937)
+        self.matches_df = get_matches_df(matches, titles)
         self.group_into_sets()
 
     def get_best_key(self, key):
