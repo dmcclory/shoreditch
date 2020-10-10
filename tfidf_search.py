@@ -154,6 +154,8 @@ class TfidfSearcher():
                 import pdb; pdb.set_trace()
             key = self.get_best_key(row[1]['normalized']) or row[1]['normalized']
             e = wow[key]
+            if e.key == '':
+                e.key = key
             e.titles.append(row[1]['title'])
             e.pings.append(row[1]['date'])
 

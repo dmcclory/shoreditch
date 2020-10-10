@@ -50,10 +50,11 @@ class Watch():
     finished: datetime = None
 
 class Entry():
-    def __init__(self):
+    def __init__(self, key=''):
         self.pings = []
         self.titles = []
         self.watches = []
+        self.key = key
 
     def finished(self):
         if not 'watches' in self.__dict__.keys():
