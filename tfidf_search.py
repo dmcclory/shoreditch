@@ -15,9 +15,11 @@ from persistence import store_database
 from collections import defaultdict
 
 def ngrams(string, n=3):
-  string = re.sub(r'[,-./]|\sBD', r'', string)
-  ngrams = zip(*[string[i:] for i in range(n)])
-  return [''.join(ngram) for ngram in ngrams]
+    if len(string) < n:
+        return [string.ljust(3, '*')]
+    string = re.sub(r'[,-./]|\sBD', r'', string)
+    ngrams = zip(*[string[i:] for i in range(n)])
+    return [''.join(ngram) for ngram in ngrams]
 
 def awesome_cossim_top(A, B, ntop, lower_bound=0):
   # force A and B as a CSR matrix.
@@ -77,7 +79,7 @@ def extract_annotations(df, column):
     return df[column].str.extract(r'.*\((.*)\)\w*$')
 
 def chop_annotations(series):
-    return series.str.replace(r'.*\((.*)\)\w*$', '')
+    return series.str.replace(r'\((.*)\)\w*$', '')
 
 STOP_WORDS = ['in', 'on', 'the', 'of']
 
