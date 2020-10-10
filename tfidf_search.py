@@ -72,6 +72,25 @@ def get_matches_df(sparse_matrix, name_vector, top=100):
 
 
 
+def extract_annotations(df, column):
+    return df[column].str.extract(r'.*\((.*)\)\w*$')
+
+def chop_annotations(series):
+    return series.str.replace(r'.*\((.*)\)\w*$', '')
+
+STOP_WORDS = ['in', 'on', 'the', 'of']
+
+def remove_stop_words(series):
+    return series.str.split(' ').apply(lambda l: ' '.join(w for w in l if w not in STOP_WORDS))
+
+def normalize(df):
+    column_label = 'title'
+    stripped = chop_annotations(df[column_label])
+    lower = stripped.str.lower()
+    destopped = remove_stop_words(lower)
+    df['normalized'] =  destopped
+    return df
+
 
 def title_date_df(paths):
     current_date = None
@@ -103,11 +122,13 @@ class TfidfSearcher():
         self.title_date_df = title_date_df(paths)
         self.entries = []
         self.group_into_sets()
-        titles = self.title_date_df['title']
+        self.title_date_df = normalize(self.title_date_df)
+        titles = self.title_date_df['normalized']
         vectorizer = TfidfVectorizer(min_df=1, analyzer=ngrams)
         tf_idf_matrix = vectorizer.fit_transform(titles)
         matches = awesome_cossim_top(tf_idf_matrix, tf_idf_matrix.transpose(), 10, 0.8)
-        self.matches_df = get_matches_df(matches, titles, top=18075)
+        # self.matches_df = get_matches_df(matches, titles, top=18075)
+        self.matches_df = get_matches_df(matches, titles, top=15756)
         import pdb; pdb.set_trace()
         x = 90
 
