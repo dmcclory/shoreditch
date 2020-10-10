@@ -88,7 +88,8 @@ def remove_stop_words(series):
 
 def normalize(df):
     column_label = 'title'
-    stripped = chop_annotations(df[column_label])
+    chopped = chop_annotations(df[column_label])
+    stripped = chopped.str.strip()
     lower = stripped.str.lower()
     destopped = remove_stop_words(lower)
     df['normalized'] =  destopped
