@@ -12,6 +12,7 @@ from line_predicates import (blank, dateline)
 
 from persistence import store_database
 
+from collections import defaultdict
 
 def ngrams(string, n=3):
   string = re.sub(r'[,-./]|\sBD', r'', string)
@@ -95,6 +96,8 @@ def normalize(df):
 def title_date_df(paths):
     current_date = None
     result = []
+    titles = []
+    dates = []
     for path in paths:
         year = path[5:9]
         with open(path) as f:
@@ -110,8 +113,10 @@ def title_date_df(paths):
                     current_date = datetime.strptime(current_date, '%m/%d/%Y')
                 else:
                     result.append([cleaned, current_date])
+                    titles.append(cleaned)
+                    dates.append(current_date)
 
-    df = pd.DataFrame.from_records(result, columns=['title', 'date'])
+    df = pd.DataFrame.from_dict({'title': titles, 'date': dates}, dtype="string")
     return df
 
 
@@ -121,22 +126,36 @@ class TfidfSearcher():
         self.paths = paths
         self.title_date_df = title_date_df(paths)
         self.entries = []
-        self.group_into_sets()
         self.title_date_df = normalize(self.title_date_df)
         titles = self.title_date_df['normalized']
         vectorizer = TfidfVectorizer(min_df=1, analyzer=ngrams)
         tf_idf_matrix = vectorizer.fit_transform(titles)
         matches = awesome_cossim_top(tf_idf_matrix, tf_idf_matrix.transpose(), 10, 0.8)
-        # self.matches_df = get_matches_df(matches, titles, top=18075)
         self.matches_df = get_matches_df(matches, titles, top=15756)
-        import pdb; pdb.set_trace()
-        x = 90
+        # self.matches_df = get_matches_df(matches, titles, top=18075)
+        # self.matches_df = get_matches_df(matches, titles, top=1937)
+        self.group_into_sets()
+
+    def get_best_key(self, key):
+        right_side = self.matches_df[self.matches_df['left_side'] == key].sort_values('similarity', ascending=False).head(1)['right_side']
+        try:
+            return right_side.values[0]
+        except:
+            return None
 
     def group_into_sets(self):
         sets  = []
+        wow = defaultdict(Entry)
 
-        for group in sets:
-            e  = Entry()
+        for row in self.title_date_df.iterrows():
+            if row[1]['normalized'] == '':
+                import pdb; pdb.set_trace()
+            key = self.get_best_key(row[1]['normalized']) or row[1]['normalized']
+            e = wow[key]
+            e.titles.append(row[1]['title'])
+            e.pings.append(row[1]['date'])
+
+        for e in wow.values():
             self.entries.append(e)
 
         self.entries.sort(key = lambda v: len(v.pings))
