@@ -10,7 +10,7 @@ from datetime import datetime
 
 from line_predicates import (blank, dateline)
 
-from persistence import store_database
+from persistence import store_database, store_object
 
 from collections import defaultdict
 
@@ -173,4 +173,5 @@ class TfidfSearcher():
         self.entries.reverse()
 
     def save(self):
+        store_object('tf_matches.pickle', self.matches_df)
         store_database('tf_data.pickle', self.entries)

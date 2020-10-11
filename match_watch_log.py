@@ -11,13 +11,11 @@ from entry import Entry, Watch
 from dataclasses import dataclass
 
 from datetime import datetime
-from persistence import load_database
+from persistence import load_database, store_database
 
 
 PICKLE_PATH = os.environ['MATCH_LINES_INPUT']
 thing = load_database(PICKLE_PATH)
-# with open('data.pickle', 'rb') as f:
-#     thing = pickle.load(f)
 
 
 titles = [t.titles[0] for t in thing]
@@ -88,9 +86,7 @@ thing_with_extra_data = list(thing_dict.values())
 thing_with_extra_data.sort(key = lambda v: len(v.pings))
 thing_with_extra_data.reverse()
 
-
-with open('augmented_data.pickle', 'wb') as f:
-    pickle.dump(thing_with_extra_data, f)
+store_database(path, thing_with_extra_data)
 
 
 print(as_watches)
