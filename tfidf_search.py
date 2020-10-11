@@ -8,12 +8,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import sparse_dot_topn.sparse_dot_topn as ct
 
 
-from tfidf_helpers import get_best_key
 
 from shoreditch.entry import Entry
 from shoreditch.line_predicates import blank, dateline
 from shoreditch.normalization import normalize, key_for
 from shoreditch.persistence import store_database, store_object
+from shoreditch.tfidf_helpers import get_best_key
 
 def ngrams(string, n=3):
     if len(string) < n:
