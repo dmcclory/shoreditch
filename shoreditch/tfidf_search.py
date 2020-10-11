@@ -9,7 +9,7 @@ import sparse_dot_topn.sparse_dot_topn as ct
 
 
 
-from shoreditch.entry import Entry
+from shoreditch.entry import Entry, Watch
 from shoreditch.line_predicates import blank, dateline
 from shoreditch.normalization import normalize, key_for
 from shoreditch.persistence import store_database, store_object
@@ -100,6 +100,57 @@ def title_date_df(paths):
 
     df = pd.DataFrame.from_dict({'title': titles, 'date': dates}, dtype="string")
     return df
+
+
+def process_watch_log(matches_df, years):
+    watch_events = defaultdict(lambda: [])
+    uncategorized = []
+    for year in ['2020', '2019']:
+        with open('data/{}_watch.txt'.format(year)) as f:
+            watches = f.readlines()
+
+        for entry in watches:
+            cleaned = entry.strip()
+            if (cleaned == ''):
+                continue
+            elif (re.match('^\d+\/\d+', cleaned)):
+                current_date = cleaned.strip(':')
+                current_date = current_date + '/' + year
+                current_date = datetime.strptime(current_date, '%m/%d/%Y')
+            else:
+                print('title: ', cleaned)
+                verb, *rest = cleaned.split(' ')
+                title = ' '.join(rest)
+                title_key = key_for(title)
+                key = get_best_key(matches_df, title_key)
+                if key:
+                    watch_events[key].insert(0, (verb, current_date, title))
+                else:
+                    uncategorized.append((verb, current_date, title))
+
+    as_watches = { }
+
+    for (k,v) in watch_events.items():
+        as_watches[k] = []
+        for (verb, current_date, title) in v:
+            if verb == 'Watched':
+                w = Watch()
+                w.started = current_date
+                w.finished = current_date
+                as_watches[k].append(w)
+            if verb == 'Started':
+                w = Watch()
+                w.started = current_date
+                as_watches[k].append(w)
+            if verb == 'Finished':
+                try:
+                    w = as_watches[k][-1]
+                    w.finished = current_date
+                except:
+                    import pdb; pdb.set_trace()
+
+
+    return (as_watches, uncategorized)
 
 
 class TfidfSearcher():
