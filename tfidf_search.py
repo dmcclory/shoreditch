@@ -1,20 +1,18 @@
 import pandas as pd
-import re
-from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
+import re
+from collections import defaultdict
+from datetime import datetime
 from scipy.sparse import csr_matrix
+from sklearn.feature_extraction.text import TfidfVectorizer
 import sparse_dot_topn.sparse_dot_topn as ct
 
-from entry import Entry
-from datetime import datetime
 
 from line_predicates import (blank, dateline)
-
 from persistence import store_database, store_object
-
-from collections import defaultdict
-
 from tfidf_helpers import get_best_key
+
+from shoreditch.entry import Entry
 from shoreditch.normalization import normalize, key_for
 
 def ngrams(string, n=3):

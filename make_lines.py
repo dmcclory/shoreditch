@@ -2,10 +2,10 @@ import os
 import sys
 import argparse
 from datetime import datetime, timedelta
-
 from sparklines import sparklines
 from termcolor import colored
-from entry import Entry, get_dataset, count_durations_ago
+
+from shoreditch.entry import Entry, get_dataset, count_durations_ago
 from persistence import load_database
 
 parser = argparse.ArgumentParser(description='Browse the Cool Stuff', allow_abbrev=True)

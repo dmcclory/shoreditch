@@ -1,7 +1,7 @@
 import os
 import pickle
 
-from entry import Entry
+from shoreditch.entry import Entry
 
 def load_object(path):
     with open(path, 'rb') as f:
