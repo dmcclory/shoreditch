@@ -14,6 +14,8 @@ from persistence import store_database, store_object
 
 from collections import defaultdict
 
+from tfidf_helpers import get_best_key, normalize, key_for
+
 def ngrams(string, n=3):
     if len(string) < n:
         return [string.ljust(3, '*')]
@@ -74,37 +76,6 @@ def get_matches_df(sparse_matrix, name_vector, top=None):
                            'similarity': similarity})
 
 
-
-def extract_annotations(series):
-    return series.str.extract(r'.*\((.*)\)\w*$')[0].fillna('')
-
-def chop_annotations(series):
-    return series.str.replace(r'\((.*)\)\w*$', '')
-
-STOP_WORDS = ['in', 'on', 'the', 'of']
-
-def remove_stop_words(series):
-    return series.str.split(' ').apply(lambda l: ' '.join(w for w in l if w not in STOP_WORDS))
-
-def add_season_suffix(keys, suffixes):
-    x = pd.DataFrame.from_dict({'protokey': keys, 'annotation': suffixes}, dtype='string')
-    return x.apply(
-        lambda r: r['protokey'] + ' ' + r['annotation'] if re.match(r'^s\d+$', r['annotation']) else r['protokey'], axis=1
-    )
-
-def normalize(df):
-    column_label = 'title'
-    annotations = extract_annotations(df[column_label])
-    chopped = chop_annotations(df[column_label])
-    stripped = chopped.str.strip()
-    lower = stripped.str.lower()
-    destopped = remove_stop_words(lower)
-    seasoned = add_season_suffix(destopped, annotations)
-    df['normalized'] =  seasoned
-    df['annotations'] = annotations
-    return df
-
-
 def title_date_df(paths):
     current_date = None
     result = []
@@ -133,7 +104,6 @@ def title_date_df(paths):
 
 
 class TfidfSearcher():
-
     def __init__(self, paths):
         self.paths = paths
         self.title_date_df = title_date_df(paths)
@@ -146,21 +116,12 @@ class TfidfSearcher():
         self.matches_df = get_matches_df(matches, titles)
         self.group_into_sets()
 
-    def get_best_key(self, key):
-        right_side = self.matches_df[self.matches_df['left_side'] == key].sort_values('similarity', ascending=False).head(1)['right_side']
-        try:
-            return right_side.values[0]
-        except:
-            return None
-
     def group_into_sets(self):
         sets  = []
         wow = defaultdict(Entry)
 
         for row in self.title_date_df.iterrows():
-            if row[1]['normalized'] == '':
-                import pdb; pdb.set_trace()
-            key = self.get_best_key(row[1]['normalized']) or row[1]['normalized']
+            key = get_best_key(self.matches_df, row[1]['normalized']) or row[1]['normalized']
             e = wow[key]
             if e.key == '':
                 e.key = key
