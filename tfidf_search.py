@@ -14,7 +14,8 @@ from persistence import store_database, store_object
 
 from collections import defaultdict
 
-from tfidf_helpers import get_best_key, normalize, key_for
+from tfidf_helpers import get_best_key
+from normalization import normalize, key_for
 
 def ngrams(string, n=3):
     if len(string) < n:

@@ -13,7 +13,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from persistence import load_database, store_database, load_object
 
-from tfidf_helpers import get_best_key, normalize, key_for
+from tfidf_helpers import get_best_key
+from normalization import normalize, key_for
 
 PICKLE_PATH = os.environ['MATCH_LINES_INPUT']
 thing = load_database(PICKLE_PATH)
