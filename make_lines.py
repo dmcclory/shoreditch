@@ -6,7 +6,7 @@ from sparklines import sparklines
 from termcolor import colored
 
 from shoreditch.entry import Entry, get_dataset, count_durations_ago
-from persistence import load_database
+from shoreditch.persistence import load_database
 
 parser = argparse.ArgumentParser(description='Browse the Cool Stuff', allow_abbrev=True)
 

@@ -3,11 +3,11 @@ import re
 from datetime import datetime
 from collections import defaultdict
 
-from persistence import load_database, store_database, load_object
 from tfidf_helpers import get_best_key
 
 from shoreditch.entry import Entry, Watch
 from shoreditch.normalization import normalize, key_for
+from shoreditch.persistence import load_database, store_database, load_object
 
 PICKLE_PATH = os.environ['MATCH_LINES_INPUT']
 thing = load_database(PICKLE_PATH)

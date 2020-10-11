@@ -1,6 +1,6 @@
 import os
 import sys
-from persistence import load_database
+from shoreditch.persistence import load_database
 
 
 PICKLE_PATH = sys.argv[1] if len(sys.argv) > 1 else os.environ['PICKLE_PATH']
