@@ -8,11 +8,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import sparse_dot_topn.sparse_dot_topn as ct
 
 
-from line_predicates import (blank, dateline)
 from persistence import store_database, store_object
 from tfidf_helpers import get_best_key
 
 from shoreditch.entry import Entry
+from shoreditch.line_predicates import blank, dateline
 from shoreditch.normalization import normalize, key_for
 
 def ngrams(string, n=3):
