@@ -1,18 +1,10 @@
 import os
 import re
-import pickle
-
+from datetime import datetime
 from collections import defaultdict
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
 
 from entry import Entry, Watch
-
-from dataclasses import dataclass
-
-from datetime import datetime
 from persistence import load_database, store_database, load_object
-
 from tfidf_helpers import get_best_key
 from normalization import normalize, key_for
 
@@ -20,13 +12,6 @@ PICKLE_PATH = os.environ['MATCH_LINES_INPUT']
 thing = load_database(PICKLE_PATH)
 
 matches_df = load_object('tf_matches.pickle')
-
-
-titles = [t.titles[0] for t in thing]
-
-
-def get_matches(title):
-    return process.extract(title, titles, limit=10)
 
 
 cool = defaultdict(lambda: [])
