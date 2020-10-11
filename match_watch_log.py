@@ -11,11 +11,14 @@ from entry import Entry, Watch
 from dataclasses import dataclass
 
 from datetime import datetime
-from persistence import load_database, store_database
+from persistence import load_database, store_database, load_object
 
+from tfidf_helpers import get_best_key, normalize, key_for
 
 PICKLE_PATH = os.environ['MATCH_LINES_INPUT']
 thing = load_database(PICKLE_PATH)
+
+matches_df = load_object('tf_matches.pickle')
 
 
 titles = [t.titles[0] for t in thing]
@@ -29,7 +32,6 @@ cool = defaultdict(lambda: [])
 uncategorized = defaultdict(lambda: [])
 uncategorized = []
 
-# for year in ['2019', '2020']:
 for year in ['2020', '2019']:
     with open('data/{}_watch.txt'.format(year)) as f:
         watches = f.readlines()
@@ -46,11 +48,10 @@ for year in ['2020', '2019']:
             print('title: ', cleaned)
             verb, *rest = cleaned.split(' ')
             title = ' '.join(rest)
-            matches = get_matches(title)
-            good_matches = [m for m in matches if m[1] >= 90]
-            if len(good_matches) > 0:
-                best_match = good_matches[0][0]
-                cool[best_match].insert(0, (verb, current_date, title))
+            title_key = key_for(title)
+            key = get_best_key(matches_df, title_key)
+            if key:
+                cool[key].insert(0, (verb, current_date, title))
             else:
                 uncategorized.append((verb, current_date, title))
 
@@ -75,7 +76,7 @@ for (k,v) in cool.items():
             except:
                 import pdb; pdb.set_trace()
 
-thing_dict = { t.titles[0]: t for t in thing}
+thing_dict = { t.key: t for t in thing}
 
 
 for (k, v) in as_watches.items():
@@ -86,6 +87,7 @@ thing_with_extra_data = list(thing_dict.values())
 thing_with_extra_data.sort(key = lambda v: len(v.pings))
 thing_with_extra_data.reverse()
 
+path = 'augmented_data.pickle'
 store_database(path, thing_with_extra_data)
 
 
