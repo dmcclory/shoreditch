@@ -153,6 +153,20 @@ def process_watch_log(matches_df, years):
     return (as_watches, uncategorized)
 
 
+def add_watches_to_entries(as_watches, entries):
+    entries_dict = { t.key: t for t in entries}
+
+    for (k, v) in as_watches.items():
+        entry = entries_dict[k]
+        entry.watches = v
+
+    entries_with_extra_data = list(entries_dict.values())
+    entries_with_extra_data.sort(key = lambda v: len(v.pings))
+    entries_with_extra_data.reverse()
+
+    return entries_with_extra_data
+
+
 class TfidfSearcher():
     def __init__(self, paths):
         self.paths = paths
