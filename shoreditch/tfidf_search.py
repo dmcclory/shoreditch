@@ -10,7 +10,7 @@ import sparse_dot_topn.sparse_dot_topn as ct
 
 
 from shoreditch.entry import Entry, Watch
-from shoreditch.line_predicates import blank, dateline
+from shoreditch.line_predicates import blank, dateline, yearline, extract_year
 from shoreditch.normalization import normalize, key_for
 from shoreditch.persistence import store_database, store_object
 from shoreditch.tfidf_helpers import get_best_key
@@ -74,20 +74,21 @@ def get_matches_df(sparse_matrix, name_vector, top=None):
                           'right_side': right_side,
                            'similarity': similarity})
 
-
 def title_date_df(paths):
     current_date = None
     result = []
     titles = []
     dates = []
     for path in paths:
-        year = path[5:9]
         with open(path) as f:
             for line in f.readlines():
                 cleaned = line.strip()
 
                 if blank(cleaned):
                     continue
+
+                elif yearline(cleaned):
+                    year = extract_year(cleaned)
 
                 elif dateline(cleaned):
                     current_date = cleaned.strip(':')
@@ -121,18 +122,20 @@ def add_watch_data(watches_dict, data, key):
             import pdb; pdb.set_trace()
 
 
-def process_watch_log(matches_df, years):
+def process_watch_log(matches_df, paths):
     watch_events = defaultdict(lambda: [])
     uncategorized = []
-    for year in ['2020', '2019']:
-        with open('data/{}_watch.txt'.format(year)) as f:
+    for path in paths:
+        with open(path) as f:
             watches = f.readlines()
 
         for entry in watches:
             cleaned = entry.strip()
             if (cleaned == ''):
                 continue
-            elif (re.match('^\d+\/\d+', cleaned)):
+            elif yearline(cleaned):
+                year = extract_year(cleaned)
+            elif dateline(cleaned):
                 current_date = cleaned.strip(':')
                 current_date = current_date + '/' + year
                 current_date = datetime.strptime(current_date, '%m/%d/%Y')
