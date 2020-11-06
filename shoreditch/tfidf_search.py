@@ -102,6 +102,25 @@ def title_date_df(paths):
     return df
 
 
+def add_watch_data(watches_dict, data, key):
+    verb, current_date, title = data
+    if verb == 'Watched':
+        w = Watch()
+        w.started = current_date
+        w.finished = current_date
+        watches_dict[key].append(w)
+    if verb == 'Started':
+        w = Watch()
+        w.started = current_date
+        watches_dict[key].append(w)
+    if verb == 'Finished':
+        try:
+            w = watches_dict[key][-1]
+            w.finished = current_date
+        except:
+            import pdb; pdb.set_trace()
+
+
 def process_watch_log(matches_df, years):
     watch_events = defaultdict(lambda: [])
     uncategorized = []
@@ -132,23 +151,8 @@ def process_watch_log(matches_df, years):
 
     for (k,v) in watch_events.items():
         as_watches[k] = []
-        for (verb, current_date, title) in v:
-            if verb == 'Watched':
-                w = Watch()
-                w.started = current_date
-                w.finished = current_date
-                as_watches[k].append(w)
-            if verb == 'Started':
-                w = Watch()
-                w.started = current_date
-                as_watches[k].append(w)
-            if verb == 'Finished':
-                try:
-                    w = as_watches[k][-1]
-                    w.finished = current_date
-                except:
-                    import pdb; pdb.set_trace()
-
+        for l in v:
+            add_watch_data(as_watches, l, k)
 
     return (as_watches, uncategorized)
 
