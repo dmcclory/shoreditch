@@ -1,4 +1,4 @@
-from shoreditch.tfidf_search import TfidfSearcher, process_watch_log, add_watches_to_entries
+from shoreditch.tfidf_search import TfidfSearcher, process_watch_log, add_watches_to_entries, add_uncategorized_to_entries
 from shoreditch.persistence import store_database
 
 searcher = TfidfSearcher(['data/2020.txt', 'data/2019.txt', 'data/2018.txt'])

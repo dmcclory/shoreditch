@@ -29,7 +29,7 @@ def awesome_cossim_top(A, B, ntop, lower_bound=0):
   B = B.tocsr()
   M, _ = A.shape
   _, N = B.shape
- 
+
   idx_dtype = np.int32
 
   nnz_max = M*ntop
@@ -169,6 +169,20 @@ def add_watches_to_entries(as_watches, entries):
     entries_with_extra_data.reverse()
 
     return entries_with_extra_data
+
+
+
+# started this back in October 2020 and
+# i don't remember why I wanted to add this
+def add_uncategorized_to_entries(uncategorized, entries):
+    for entry_data in uncategorized:
+        verb, current_date, title = entry_data
+        e = Entry()
+        e.titles.append(title)
+        e.pings.append(current_date)
+
+
+
 
 
 class TfidfSearcher():
