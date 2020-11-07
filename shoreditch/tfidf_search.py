@@ -76,7 +76,6 @@ def get_matches_df(sparse_matrix, name_vector, top=None):
 
 def title_date_df(paths):
     current_date = None
-    result = []
     titles = []
     dates = []
     for path in paths:
@@ -95,7 +94,6 @@ def title_date_df(paths):
                     current_date = current_date + '/' + year
                     current_date = datetime.strptime(current_date, '%m/%d/%Y')
                 else:
-                    result.append([cleaned, current_date])
                     titles.append(cleaned)
                     dates.append(current_date)
 
