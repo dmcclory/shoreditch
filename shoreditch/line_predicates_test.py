@@ -19,3 +19,12 @@ def test_returns_title_and_annotion_dict(line, expected_title, expected_annotati
     title, annotation = parse_title_line(line)
     assert(title == expected_title)
     assert(annotation == expected_annotation)
+
+@pytest.mark.parametrize('line, expected_title, expected_annotation', [
+    ('Cool Title (s2)', 'Cool Title (s2)', {'season': '2', 'type': 'tv_show'}),
+    ('Cool Title (vol.2)', 'Cool Title (vol.2)', {'volume': '2'}),
+])
+def test_seasons_and_volumes_extract_but_are_preserved(line, expected_title, expected_annotation):
+    title, annotation = parse_title_line(line)
+    assert(title == expected_title)
+    assert(annotation == expected_annotation)

@@ -13,6 +13,17 @@ def extract_year(line):
     match = yearline(line)
     return match.groups()[0]
 
+
+def parse_annotation_item(chunk):
+    if re.match('^s(\d+)$', chunk):
+        match = re.match('^s(\d+)$', chunk)
+        return [('type', 'tv_show'), ('season', match.groups()[0])]
+    elif re.match('^vol\.(\d+)$', chunk):
+        match = re.match('^vol\.(\d+)$', chunk)
+        return [('volume', match.groups()[0])]
+    else:
+        return [(f.strip() for f in chunk.split(':'))]
+
 def parse_title_line(line):
     if '(' not in line:
         return [line, {}]
@@ -21,8 +32,20 @@ def parse_title_line(line):
     title = title.strip()
     raw_annotation = raw_annotation.replace(')', '')
 
-    annotation_pairs = [[f.strip() for f in e.split(':')] for e in raw_annotation.split(',')]
+    annotation_pairs = []
+
+    for e in raw_annotation.split(','):
+        parsed_items = parse_annotation_item(e)
+        for pi in parsed_items:
+            annotation_pairs.append(pi)
+
     annotations = dict(annotation_pairs)
+
+    if annotations.get('season', ''):
+        title = '{} (s{})'.format(title, annotations['season'])
+
+    if annotations.get('volume', ''):
+        title = '{} (vol.{})'.format(title, annotations['volume'])
 
 
     return [title, annotations]
