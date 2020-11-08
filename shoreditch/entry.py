@@ -88,3 +88,7 @@ class Entry():
     def add_annotations(self, new_annotations: Dict[str, str]):
         for (k, v) in new_annotations.items():
             add_to_list_in_dict(self.annotations, k, v)
+
+
+    def type(self):
+        return self.annotations.get('type', None)

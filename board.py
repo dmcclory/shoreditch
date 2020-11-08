@@ -48,10 +48,15 @@ GO_BACK = args.go_back
 NUMBER_TO_SEE = args.number_to_see
 STATUS = args.status
 SHOW_ALL=args.all
+TYPE= args.type
 
 PICKLE_PATH = os.environ['PICKLE_PATH']
 
-thing = load_database(PICKLE_PATH)
+db = load_database(PICKLE_PATH)
+if TYPE == 'all':
+    thing = db
+else:
+    thing = [e for e in db if e.type() == TYPE]
 
 # it would be cool to be able to specify a range of dates
 # would be cool to be able to type in a title & see it's history
