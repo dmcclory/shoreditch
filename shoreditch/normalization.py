@@ -1,6 +1,8 @@
 import pandas as pd
 import re
 
+# TODO: if I switch to a parser the code in these 2 functions is 
+# going to be redundant - i forgot I was doing this at all honestly
 def extract_annotations(series):
     return series.str.extract(r'.*\((.*)\)\w*$')[0].fillna('')
 
@@ -27,7 +29,6 @@ def normalize(df):
     destopped = remove_stop_words(lower)
     seasoned = add_season_suffix(destopped, annotations)
     df['normalized'] =  seasoned
-    df['annotations'] = annotations
     return df
 
 

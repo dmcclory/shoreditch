@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 from itertools import groupby
 from dataclasses import dataclass
+from typing import Dict
 
 def count_durations_ago(count, duration_string):
     today = datetime.now()
@@ -56,11 +57,20 @@ class Watch():
     started: datetime = None
     finished: datetime = None
 
+
+
+def add_to_list_in_dict(d, k, v):
+    if k not in v:
+        d[k] = []
+    d[k] = v
+
+
 class Entry():
     def __init__(self, key=''):
         self.pings = []
         self.titles = []
         self.watches = []
+        self.annotations = {}
         self.key = key
 
     def finished(self):
@@ -74,3 +84,7 @@ class Entry():
             return False
         started_watches = [w for w in self.watches if w.started]
         return len(started_watches) > 0
+
+    def add_annotations(self, new_annotations: Dict[str, str]):
+        for (k, v) in new_annotations.items():
+            add_to_list_in_dict(self.annotations, k, v)

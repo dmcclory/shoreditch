@@ -22,7 +22,7 @@ def parse_annotation_item(chunk):
         match = re.match('^vol\.(\d+)$', chunk)
         return [('volume', match.groups()[0])]
     else:
-        return [(f.strip() for f in chunk.split(':'))]
+        return [list([f.strip() for f in chunk.split(':')])]
 
 def parse_title_line(line):
     if '(' not in line:
@@ -38,6 +38,9 @@ def parse_title_line(line):
         parsed_items = parse_annotation_item(e)
         for pi in parsed_items:
             annotation_pairs.append(pi)
+
+    if len(annotation_pairs[0]) == 1:
+        annotation_pairs = [('note', annotation_pairs[0][0])]
 
     annotations = dict(annotation_pairs)
 

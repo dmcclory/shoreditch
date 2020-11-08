@@ -10,7 +10,7 @@ import sparse_dot_topn.sparse_dot_topn as ct
 
 
 from shoreditch.entry import Entry, Watch
-from shoreditch.line_predicates import blank, dateline, yearline, extract_year
+from shoreditch.line_predicates import blank, dateline, yearline, extract_year, parse_title_line
 from shoreditch.normalization import normalize, key_for
 from shoreditch.persistence import store_database, store_object
 from shoreditch.tfidf_helpers import get_best_key
@@ -78,6 +78,7 @@ def title_date_df(paths):
     current_date = None
     titles = []
     dates = []
+    annotations = []
     for path in paths:
         with open(path) as f:
             for line in f.readlines():
@@ -94,10 +95,13 @@ def title_date_df(paths):
                     current_date = current_date + '/' + year
                     current_date = datetime.strptime(current_date, '%m/%d/%Y')
                 else:
+                    title, annotate = parse_title_line(cleaned)
                     titles.append(cleaned)
                     dates.append(current_date)
+                    annotations.append(annotate)
 
     df = pd.DataFrame.from_dict({'title': titles, 'date': dates}, dtype="string")
+    df['annotations'] = annotations
     return df
 
 
@@ -203,6 +207,8 @@ class TfidfSearcher():
         sets  = []
         wow = defaultdict(Entry)
 
+        # self.title_date_df[self.title_date_df['normalized'] == key]
+        # this could be a simpler way to select things
         for row in self.title_date_df.iterrows():
             key = get_best_key(self.matches_df, row[1]['normalized']) or row[1]['normalized']
             e = wow[key]
@@ -210,6 +216,8 @@ class TfidfSearcher():
                 e.key = key
             e.titles.append(row[1]['title'])
             e.pings.append(datetime.fromisoformat(row[1]['date']))
+            if row[1]['annotations']:
+                e.add_annotations(row[1]['annotations'])
         for e in wow.values():
             self.entries.append(e)
 

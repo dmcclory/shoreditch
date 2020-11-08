@@ -28,3 +28,11 @@ def test_seasons_and_volumes_extract_but_are_preserved(line, expected_title, exp
     title, annotation = parse_title_line(line)
     assert(title == expected_title)
     assert(annotation == expected_annotation)
+
+@pytest.mark.parametrize('line, expected_title, expected_annotation', [
+    ('Cool Title (some random thought)', 'Cool Title', {'note': 'some random thought'}),
+])
+def test_a_string_will_become_a_note(line, expected_title, expected_annotation):
+    title, annotation = parse_title_line(line)
+    assert(title == expected_title)
+    assert(annotation == expected_annotation)
