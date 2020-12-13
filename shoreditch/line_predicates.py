@@ -42,7 +42,10 @@ def parse_title_line(line):
     if len(annotation_pairs[0]) == 1:
         annotation_pairs = [('note', annotation_pairs[0][0])]
 
-    annotations = dict(annotation_pairs)
+    try:
+        annotations = dict(annotation_pairs)
+    except:
+        import pdb; pdb.set_trace()
 
     if annotations.get('season', ''):
         title = '{} (s{})'.format(title, annotations['season'])
