@@ -83,7 +83,7 @@ else:
     thing = [e for e in db if e.type() == TYPE]
 
 # filter based on the pings
-thing = [row for row in thing if len(row.pings) >= MIN_PINGS and len(row.pings) <= MAX_PINGS]
+thing = [row for row in thing if row.ping_count() >= MIN_PINGS and row.ping_count() <= MAX_PINGS]
 
 # it would be cool to be able to specify a range of dates
 # would be cool to be able to type in a title & see it's history
@@ -104,12 +104,12 @@ def build_sparkline(piece):
 
 
 def title_format(piece):
-    title = piece.titles[0]
-    return title + " (" + str(len(piece.pings)) + ")"
+    title = piece.title()
+    return title + " (" + str(piece.ping_count()) + ")"
 
 
 def color_for_row(piece):
-    title = piece.titles[0]
+    title = piece.title()
     if piece.finished():
         color = "green"
     elif piece.started():

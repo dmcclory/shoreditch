@@ -3,6 +3,7 @@ from collections import defaultdict
 from itertools import groupby
 from dataclasses import dataclass
 from typing import Dict
+from datetimerange import DateTimeRange
 
 def count_durations_ago(count, duration_string):
     today = datetime.now()
@@ -88,6 +89,18 @@ class Entry():
     def add_annotations(self, new_annotations: Dict[str, str]):
         for (k, v) in new_annotations.items():
             add_to_list_in_dict(self.annotations, k, v)
+
+    def title(self):
+        title = self.titles[0]
+        return title
+
+    def ping_count(self):
+        return len(self.pings)
+
+    def pings_within(self, start_date, end_date):
+        daterange = DateTimeRange(start_date, end_date)
+        return [p for p in self.pings if p in daterange]
+
 
 
     def type(self):
