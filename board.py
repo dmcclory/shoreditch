@@ -56,6 +56,16 @@ parser.add_argument('--all',
 parser.add_argument('--shuffle',
                     action='store_true',
                     help='randomly sort the results before reducing the number of options')
+parser.add_argument('--slice_start',
+                    dest='slice_start',
+                    default=None,
+                    type=str,
+                    help='start date for time slice')
+parser.add_argument('--slice_end',
+                    dest='slice_end',
+                    default=None,
+                    type=str,
+                    help='end date for time slice')
 
 args = parser.parse_args()
 
@@ -68,6 +78,8 @@ TYPE= args.type
 MIN_PINGS = args.min_pings
 MAX_PINGS = args.max_pings
 SHUFFLE = args.shuffle
+SLICE_START = args.slice_start
+SLICE_END = args.slice_end
 
 
 PICKLE_PATH = os.environ['PICKLE_PATH']
@@ -81,6 +93,9 @@ if TYPE == 'all':
     thing = db
 else:
     thing = [e for e in db if e.type() == TYPE]
+
+if SLICE_START and SLICE_END:
+    thing = [row for row in thing if row.pings_within(SLICE_START, SLICE_END)]
 
 # filter based on the pings
 thing = [row for row in thing if row.ping_count() >= MIN_PINGS and row.ping_count() <= MAX_PINGS]
