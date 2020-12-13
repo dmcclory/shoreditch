@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 from datetime import datetime, timedelta
+from random import shuffle
 from sparklines import sparklines
 from termcolor import colored
 
@@ -32,6 +33,18 @@ parser.add_argument('-s', '--status',
                     default='all',
                     help='filter by status (default: any)',
                    )
+parser.add_argument('-m', '--max_pings',
+                    dest='max_pings',
+                    default=9000000,
+                    type=int,
+                    help='max number of pings to allow (default: 9000000)',
+                   )
+parser.add_argument('-n', '--min_pings',
+                    dest='min_pings',
+                    default=1,
+                    type=int,
+                    help='min number of pings to allow (default: 1)',
+                   )
 parser.add_argument('-t', '--type',
                     dest='type',
                     default='all',
@@ -40,6 +53,9 @@ parser.add_argument('-t', '--type',
 parser.add_argument('--all',
                     action='store_true',
                     help='ignore count & show all of a certain status')
+parser.add_argument('--shuffle',
+                    action='store_true',
+                    help='randomly sort the results before reducing the number of options')
 
 args = parser.parse_args()
 
@@ -49,14 +65,25 @@ NUMBER_TO_SEE = args.number_to_see
 STATUS = args.status
 SHOW_ALL=args.all
 TYPE= args.type
+MIN_PINGS = args.min_pings
+MAX_PINGS = args.max_pings
+SHUFFLE = args.shuffle
+
 
 PICKLE_PATH = os.environ['PICKLE_PATH']
 
 db = load_database(PICKLE_PATH)
+
+if SHUFFLE:
+    shuffle(db)
+
 if TYPE == 'all':
     thing = db
 else:
     thing = [e for e in db if e.type() == TYPE]
+
+# filter based on the pings
+thing = [row for row in thing if len(row.pings) >= MIN_PINGS and len(row.pings) <= MAX_PINGS]
 
 # it would be cool to be able to specify a range of dates
 # would be cool to be able to type in a title & see it's history
